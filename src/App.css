@@ -1,0 +1,38 @@
+.App {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Smooth scroll behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--soft-cream);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--golden-tan);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #9F7D57;
+}
+
+/* Selection color */
+::selection {
+  background: var(--golden-tan);
+  color: var(--white);
+}
+
+::-moz-selection {
+  background: var(--golden-tan);
+  color: var(--white);
+}
