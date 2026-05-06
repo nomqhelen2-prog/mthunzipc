@@ -1,8 +1,15 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './About.css';
+
+const ABOUT_BACKDROP = `${process.env.PUBLIC_URL}/Gemini_Generated_Image_j19pi1j19pi1j19p.png`;
+
+/**
+ * Company story section that cycles through the firm's core values and purpose.
+ */
 
 const About = () => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
   const slides = [
     {
@@ -58,18 +65,22 @@ const About = () => {
     }
   ];
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev + 1) % slides.length);
-  };
+  useEffect(() => {
+    if (isPaused) {
+      return undefined;
+    }
 
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev - 1 + slides.length) % slides.length);
-  };
+    const interval = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % slides.length);
+    }, 6000);
+
+    return () => clearInterval(interval);
+  }, [isPaused, slides.length]);
 
   return (
     <section id="about" className="about">
       <div className="about-container-split">
-        <div className="about-left" style={{backgroundImage: `url(${process.env.PUBLIC_URL}/Gemini_Generated_Image_j19pi1j19pi1j19p.png)`}}>
+        <div className="about-left" style={{ backgroundImage: `linear-gradient(rgba(74, 49, 33, 0.28), rgba(74, 49, 33, 0.72)), url(${ABOUT_BACKDROP})` }}>
           <div className="about-left-content">
             <h3 className="about-left-heading">What Makes Us Different</h3>
             <ul className="about-left-list">
@@ -83,7 +94,11 @@ const About = () => {
         </div>
 
         <div className="about-right">
-          <div className="about-carousel">
+          <div
+            className="about-carousel"
+            onMouseEnter={() => setIsPaused(true)}
+            onMouseLeave={() => setIsPaused(false)}
+          >
             <div 
               className="about-slides" 
               style={{ transform: `translateY(-${currentSlide * 100}%)` }}

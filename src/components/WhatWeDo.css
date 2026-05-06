@@ -1,5 +1,11 @@
 .what-we-do {
   background-color: var(--white);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  position: relative;
+  color: var(--white);
 }
 
 .what-we-do .container {
@@ -16,14 +22,14 @@
 .section-title {
   font-size: 48px;
   font-weight: 700;
-  color: var(--deep-cocoa);
+  color: var(--white);
   margin-bottom: 20px;
   letter-spacing: 2px;
 }
 
 .section-subtitle {
   font-size: 18px;
-  color: #6B5D55;
+  color: rgba(242, 234, 220, 0.92);
   max-width: 700px;
   margin: 0 auto;
   line-height: 1.8;
@@ -38,7 +44,7 @@
 
 .service-card {
   --card-scale: 0.92;
-  background-color: var(--soft-cream);
+  background-color: rgba(255, 255, 255, 0.9);
   padding: 48px 48px;
   border-radius: 2px;
   text-align: center;

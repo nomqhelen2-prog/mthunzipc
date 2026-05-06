@@ -13,7 +13,6 @@
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  background-blend-mode: multiply;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,7 +43,7 @@
   color: var(--white);
   margin-bottom: 30px;
   letter-spacing: 0.5px;
-  font-family: 'Comic Sans MS', 'Brush Script MT', 'Segoe Script', cursive;
+  font-family: 'Playfair Display', 'Georgia', serif;
 }
 
 .about-left-list {
@@ -60,7 +59,7 @@
   padding-left: 25px;
   position: relative;
   line-height: 1.6;
-  font-family: 'Comic Sans MS', 'Brush Script MT', 'Segoe Script', cursive;
+  font-family: 'Georgia', 'Garamond', serif;
 }
 
 .about-left-list li::before {
@@ -78,7 +77,7 @@
 }
 
 .about-right {
-  background-color: var(--light-gray);
+  background: linear-gradient(180deg, rgba(248, 245, 240, 0.96), rgba(242, 234, 220, 0.98));
   padding: 80px 60px;
   position: relative;
   overflow: hidden;

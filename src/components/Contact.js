@@ -2,137 +2,63 @@ import React, { useEffect, useRef, useState } from 'react';
 import { FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
 import './Contact.css';
 
-const CONSULTATION_EMAIL_ENDPOINT = 'https://formsubmit.co/ajax/mthunziprojectconsultants@gmail.com';
-const ALLOWED_CLIENT_TYPES = new Set([
-  'Busy Professional',
-  'Property Owner',
-  'Small Developer',
-  'Diaspora Client',
-  'Other'
-]);
-const NAME_REGEX = /^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}$/;
+const VISIT_REQUEST_ENDPOINT =
+  process.env.REACT_APP_VISIT_REQUEST_API_URL || '/api/visit-request';
+const CONSULTATION_EMAIL_ADDRESS = 'info@mthunzipc.co.zw';
+const NAME_REGEX = /^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,100}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_REGEX = /^[0-9+()\-\s]{7,20}$/;
-const MAX_EMAIL_LENGTH = 254;
-const MAX_PHONE_LENGTH = 20;
-const MIN_MESSAGE_LENGTH = 20;
-const MAX_MESSAGE_LENGTH = 2000;
+const MAX_NOTES_LENGTH = 2000;
 const MIN_SUBMIT_DELAY_MS = 2000;
-const REQUEST_TIMEOUT_MS = 10000;
-const SQLI_PATTERN = /(\bunion\b\s+\bselect\b|\bselect\b\s+.+\bfrom\b|\binsert\b\s+\binto\b|\bupdate\b\s+.+\bset\b|\bdelete\b\s+\bfrom\b|\bdrop\b\s+\btable\b|\bor\b\s+['"]?1['"]?\s*=\s*['"]?1['"]?|--|\/\*|\*\/|;)/i;
 const DEFAULT_SUBMISSION_ERROR_MESSAGE =
   'Unable to send your request right now. Please try again or contact us directly.';
-const FILE_PROTOCOL_ERROR_MESSAGE =
-  'Please open this website through a web server (for example, npm start or your live domain). Form submissions do not work from local HTML files.';
 
 const getInitialFormData = () => ({
-  firstName: '',
-  lastName: '',
-  email: '',
-  phone: '',
-  clientType: '',
-  message: '',
-  companyWebsite: ''
+  visitorName: '',
+  visitorEmail: '',
+  visitDate: '',
+  notes: '',
+  website: '',
+  submittedAt: new Date().toISOString()
 });
 
 const normalizeText = (value) => value.trim().replace(/\s+/g, ' ');
 
 const normalizeFormData = (data) => ({
-  firstName: normalizeText(data.firstName),
-  lastName: normalizeText(data.lastName),
-  email: data.email.trim().toLowerCase(),
-  phone: data.phone.trim(),
-  clientType: data.clientType.trim(),
-  message: data.message.trim(),
-  companyWebsite: data.companyWebsite.trim()
+  visitorName: normalizeText(data.visitorName),
+  visitorEmail: data.visitorEmail.trim().toLowerCase(),
+  visitDate: data.visitDate.trim(),
+  notes: data.notes.trim(),
+  website: data.website.trim(),
+  submittedAt: data.submittedAt
 });
 
 const validateFormData = (data) => {
-  if (!NAME_REGEX.test(data.firstName)) {
-    return 'Please enter a valid first name.';
+  if (!NAME_REGEX.test(data.visitorName)) {
+    return 'Please enter a valid name.';
   }
 
-  if (!NAME_REGEX.test(data.lastName)) {
-    return 'Please enter a valid last name.';
-  }
-
-  if (data.email.length > MAX_EMAIL_LENGTH || !EMAIL_REGEX.test(data.email)) {
+  if (!EMAIL_REGEX.test(data.visitorEmail) || data.visitorEmail.length > 254) {
     return 'Please enter a valid email address.';
   }
 
-  if (data.phone && !PHONE_REGEX.test(data.phone)) {
-    return 'Please enter a valid phone number.';
+  if (!data.visitDate || Number.isNaN(new Date(data.visitDate).getTime())) {
+    return 'Please choose a valid visit date.';
   }
 
-  if (!ALLOWED_CLIENT_TYPES.has(data.clientType)) {
-    return 'Please select a valid client type.';
-  }
-
-  if (data.message.length < MIN_MESSAGE_LENGTH || data.message.length > MAX_MESSAGE_LENGTH) {
-    return `Please enter a message between ${MIN_MESSAGE_LENGTH} and ${MAX_MESSAGE_LENGTH} characters.`;
-  }
-
-  const combinedInput = [
-    data.firstName,
-    data.lastName,
-    data.email,
-    data.phone,
-    data.clientType,
-    data.message
-  ].join(' ');
-
-  if (SQLI_PATTERN.test(combinedInput)) {
-    return 'Your submission contains invalid characters or keywords. Please revise and try again.';
+  if (data.notes.length > MAX_NOTES_LENGTH) {
+    return `Notes must be ${MAX_NOTES_LENGTH} characters or fewer.`;
   }
 
   return null;
 };
 
-const isSuccessfulSubmission = (responseData) => (
-  responseData == null ||
-  responseData.success === 'true' ||
-  responseData.success === true
-);
-
-const getProviderMessage = (responseData) => {
-  if (!responseData || typeof responseData !== 'object') {
-    return '';
-  }
-
-  return typeof responseData.message === 'string' ? responseData.message.trim() : '';
-};
-
-const mapProviderMessageToUserMessage = (providerMessage) => {
-  if (!providerMessage) {
-    return '';
-  }
-
-  const normalizedMessage = providerMessage.toLowerCase();
-
-  if (normalizedMessage.includes('needs activation')) {
-    return "Email delivery is not activated yet. Open the FormSubmit 'Activate Form' email for this inbox, then submit again.";
-  }
-
-  if (normalizedMessage.includes('open this page through a web server')) {
-    return FILE_PROTOCOL_ERROR_MESSAGE;
-  }
-
-  if (normalizedMessage.includes('captcha')) {
-    return 'Form verification failed. Please refresh the page and try again.';
-  }
-
-  return providerMessage;
-};
-
-const getSubmissionFailureMessage = (responseData) => {
-  const providerMessage = getProviderMessage(responseData);
-  return mapProviderMessageToUserMessage(providerMessage) || DEFAULT_SUBMISSION_ERROR_MESSAGE;
-};
+/**
+ * Visit request form and contact details for the site.
+ */
 
 const Contact = () => {
   const sectionRef = useRef(null);
   const [formData, setFormData] = useState(getInitialFormData);
-
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
   const [submitMessage, setSubmitMessage] = useState('');
@@ -191,7 +117,7 @@ const Contact = () => {
 
     const sanitizedData = normalizeFormData(formData);
 
-    if (sanitizedData.companyWebsite) {
+    if (sanitizedData.website) {
       setSubmitStatus('success');
       setSubmitMessage("Thank you! We'll be in touch within 24 hours.");
       setFormData(getInitialFormData());
@@ -205,14 +131,7 @@ const Contact = () => {
       return;
     }
 
-    if (window.location.protocol === 'file:') {
-      setSubmitStatus('error');
-      setSubmitMessage(FILE_PROTOCOL_ERROR_MESSAGE);
-      return;
-    }
-
     const validationError = validateFormData(sanitizedData);
-
     if (validationError) {
       setSubmitStatus('error');
       setSubmitMessage(validationError);
@@ -222,42 +141,25 @@ const Contact = () => {
     setIsSubmitting(true);
 
     const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+    const timeoutId = window.setTimeout(() => controller.abort(), 10000);
 
     try {
-      const response = await fetch(CONSULTATION_EMAIL_ENDPOINT, {
+      const response = await fetch(VISIT_REQUEST_ENDPOINT, {
         method: 'POST',
-        mode: 'cors',
-        credentials: 'omit',
-        cache: 'no-store',
-        referrerPolicy: 'no-referrer',
-        signal: controller.signal,
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json'
         },
-        body: JSON.stringify({
-          _subject: 'New Consultation Request - Mthunzi Project Consultants',
-          _template: 'table',
-          _captcha: 'true',
-          _replyto: sanitizedData.email,
-          firstName: sanitizedData.firstName,
-          lastName: sanitizedData.lastName,
-          email: sanitizedData.email,
-          phone: sanitizedData.phone || 'Not provided',
-          clientType: sanitizedData.clientType,
-          message: sanitizedData.message,
-          submittedAt: new Date().toISOString()
-        })
+        signal: controller.signal,
+        body: JSON.stringify(sanitizedData)
       });
 
       const responseData = await response.json().catch(() => null);
-
-      const wasSuccessful = response.ok && isSuccessfulSubmission(responseData);
+      const wasSuccessful = response.ok && responseData?.status === 'Success';
 
       if (!wasSuccessful) {
         setSubmitStatus('error');
-        setSubmitMessage(getSubmissionFailureMessage(responseData));
+        setSubmitMessage(responseData?.message || DEFAULT_SUBMISSION_ERROR_MESSAGE);
         return;
       }
 
@@ -266,7 +168,7 @@ const Contact = () => {
       setFormData(getInitialFormData());
       formStartedAtRef.current = Date.now();
     } catch (error) {
-      console.error('Error submitting consultation request.', error);
+      console.error('Error submitting visit request.', error);
       setSubmitStatus('error');
       setSubmitMessage(
         error.name === 'AbortError'
@@ -283,16 +185,16 @@ const Contact = () => {
     <section id="contact" className="contact" ref={sectionRef}>
       <div className="container">
         <div className="section-header">
-          <h2 className="section-title">GET IN TOUCH</h2>
+          <h2 className="section-title">REQUEST A VISIT</h2>
           <p className="section-subtitle">
-            Ready to protect your investment? Request a consultation today.
+            Share a few details and we will follow up with a consultation.
           </p>
         </div>
 
         <div className="contact-content">
           <div className="contact-info">
             <h3 className="contact-info-title">CONTACT US:</h3>
-            
+
             <div className="contact-info-item">
               <div className="contact-icon">
                 <FaMapMarkerAlt />
@@ -319,15 +221,14 @@ const Contact = () => {
               </div>
               <div className="contact-details">
                 <h4>Email</h4>
-                <p>info@mthunzipc.co.zw</p>
+                <p>{CONSULTATION_EMAIL_ADDRESS}</p>
               </div>
             </div>
 
             <div className="contact-info-description">
               <p>
-                Whether you're a busy professional, property owner, small developer, 
-                or diaspora client needing trusted representation, we're here to ensure 
-                your project succeeds.
+                Whether you're a busy professional, property owner, small developer, or diaspora
+                client needing trusted representation, we're here to ensure your project succeeds.
               </p>
             </div>
           </div>
@@ -335,12 +236,12 @@ const Contact = () => {
           <div className="contact-form-wrapper">
             <form onSubmit={handleSubmit} className="contact-form">
               <div className="form-honeypot" aria-hidden="true">
-                <label htmlFor="companyWebsite">Company website</label>
+                <label htmlFor="website">Company website</label>
                 <input
-                  id="companyWebsite"
+                  id="website"
                   type="text"
-                  name="companyWebsite"
-                  value={formData.companyWebsite}
+                  name="website"
+                  value={formData.website}
                   onChange={handleChange}
                   tabIndex="-1"
                   autoComplete="off"
@@ -351,92 +252,53 @@ const Contact = () => {
                 <div className="form-group">
                   <input
                     type="text"
-                    name="firstName"
-                    value={formData.firstName}
+                    name="visitorName"
+                    value={formData.visitorName}
                     onChange={handleChange}
-                    placeholder="First Name *"
-                    autoComplete="given-name"
-                    maxLength="50"
-                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}"
+                    placeholder="Full Name *"
+                    autoComplete="name"
+                    maxLength="100"
+                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,100}"
                     required
                   />
                 </div>
-                <div className="form-group">
-                  <input
-                    type="text"
-                    name="lastName"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    placeholder="Last Name *"
-                    autoComplete="family-name"
-                    maxLength="50"
-                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="form-row">
                 <div className="form-group">
                   <input
                     type="email"
-                    name="email"
-                    value={formData.email}
+                    name="visitorEmail"
+                    value={formData.visitorEmail}
                     onChange={handleChange}
                     placeholder="Email Address *"
                     autoComplete="email"
-                    maxLength={MAX_EMAIL_LENGTH}
+                    maxLength="254"
                     required
-                  />
-                </div>
-                <div className="form-group">
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="Phone Number"
-                    autoComplete="tel"
-                    inputMode="tel"
-                    maxLength={MAX_PHONE_LENGTH}
                   />
                 </div>
               </div>
 
               <div className="form-group">
-                <select
-                  name="clientType"
-                  value={formData.clientType}
+                <input
+                  type="date"
+                  name="visitDate"
+                  value={formData.visitDate}
                   onChange={handleChange}
                   required
-                >
-                  <option value="">Select Client Type *</option>
-                  <option value="Busy Professional">Busy Professional</option>
-                  <option value="Property Owner">Property Owner</option>
-                  <option value="Small Developer">Small Developer</option>
-                  <option value="Diaspora Client">Diaspora Client</option>
-                  <option value="Other">Other</option>
-                </select>
+                />
               </div>
 
               <div className="form-group">
                 <textarea
-                  name="message"
-                  value={formData.message}
+                  name="notes"
+                  value={formData.notes}
                   onChange={handleChange}
                   placeholder="Tell us about your project..."
                   rows="5"
-                  minLength={MIN_MESSAGE_LENGTH}
-                  maxLength={MAX_MESSAGE_LENGTH}
+                  maxLength={MAX_NOTES_LENGTH}
                   required
                 ></textarea>
               </div>
 
-              <button 
-                type="submit" 
-                className="submit-btn"
-                disabled={isSubmitting}
-              >
+              <button type="submit" className="submit-btn" disabled={isSubmitting}>
                 {isSubmitting ? 'Submitting...' : 'Request Consultation'}
               </button>
 

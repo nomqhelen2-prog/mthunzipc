@@ -1,6 +1,6 @@
 import React from 'react';
 import Navbar from './components/Navbar';
-import Hero from './components/Hero';
+import Showcase from './components/Showcase';
 import WhatWeDo from './components/WhatWeDo';
 import About from './components/About';
 import Contact from './components/Contact';
@@ -11,7 +11,7 @@ function App() {
   return (
     <div className="App">
       <Navbar />
-      <Hero />
+      <Showcase />
       <WhatWeDo />
       <About />
       <Contact />
