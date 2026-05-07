@@ -1,11 +1,7 @@
 .what-we-do {
-  background-color: var(--white);
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
+  background-color: #f4ead9;
   position: relative;
-  color: var(--white);
+  color: var(--deep-cocoa);
 }
 
 .what-we-do .container {
@@ -22,14 +18,14 @@
 .section-title {
   font-size: 48px;
   font-weight: 700;
-  color: var(--white);
+  color: var(--deep-cocoa);
   margin-bottom: 20px;
   letter-spacing: 2px;
 }
 
 .section-subtitle {
   font-size: 18px;
-  color: rgba(242, 234, 220, 0.92);
+  color: #6B5D55;
   max-width: 700px;
   margin: 0 auto;
   line-height: 1.8;
@@ -44,9 +40,9 @@
 
 .service-card {
   --card-scale: 0.92;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.84);
   padding: 48px 48px;
-  border-radius: 2px;
+  border-radius: 20px;
   text-align: center;
   transition: transform 0.4s ease, box-shadow 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
   border: 1px solid transparent;

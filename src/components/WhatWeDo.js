@@ -2,8 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import { FaUsers, FaFileInvoiceDollar, FaClipboardCheck, FaGlobeAmericas } from 'react-icons/fa';
 import './WhatWeDo.css';
 
-const SECTION_BACKDROP = `${process.env.PUBLIC_URL}/Gemini_Generated_Image_j19pi1j19pi1j19p.png`;
-
 /**
  * Services section that highlights the firm's core consulting offering.
  */
@@ -65,12 +63,7 @@ const WhatWeDo = () => {
   ];
 
   return (
-    <section
-      id="services"
-      className="what-we-do"
-      ref={sectionRef}
-      style={{ backgroundImage: `linear-gradient(rgba(74, 49, 33, 0.84), rgba(74, 49, 33, 0.84)), url(${SECTION_BACKDROP})` }}
-    >
+    <section id="services" className="what-we-do" ref={sectionRef}>
       <div className="container">
         <div className="section-header">
           <h2 className="section-title">WHAT WE DO</h2>

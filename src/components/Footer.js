@@ -1,73 +1,33 @@
 import React from 'react';
-import { FaLinkedinIn, FaInstagram, FaFacebookF, FaWhatsapp } from 'react-icons/fa';
-import { FaTiktok } from 'react-icons/fa6';
+import { FaFacebook, FaTiktok, FaLinkedin } from 'react-icons/fa';
 import './Footer.css';
 
-const CONTACT_EMAIL = 'info@mthunzipc.co.zw';
-
 /**
- * Site footer with contact details and social links.
+ * Site footer with links and social media.
  */
-
 const Footer = () => {
   return (
     <footer className="footer">
       <div className="footer-container">
-        <div className="footer-main">
-          <div className="footer-brand">
-            <h2 className="footer-tagline">
-              Look for the → <span className="footer-brand-name">EXPERTS</span>
-            </h2>
+        <div className="footer-content">
+          <div className="footer-links">
+            <a href="/terms" className="footer-link">Term of use</a>
+            <a href="/privacy" className="footer-link">Privacy Policy</a>
+            <a href="/accessibility" className="footer-link">Accessibility assessment</a>
           </div>
-
-          <div className="footer-info">
-            <div className="footer-column">
-              <h3 className="footer-column-title">Speak to Us</h3>
-              <div className="footer-links">
-                <a href={`mailto:${CONTACT_EMAIL}`} className="footer-email">{CONTACT_EMAIL}</a>
-                
-              </div>
-            </div>
-
-            <div className="footer-column">
-              <h3 className="footer-column-title">Call Us</h3>
-              <div className="footer-links">
-                <div className="footer-phone">
-                  <span className="phone-flag">🇿🇼</span>
-                  <a href="tel:+263242123456">+263 242 123456</a>
-                </div>
-                <div className="footer-phone">
-                  <span className="phone-flag">🇿🇼</span>
-                  <a href="tel:+263712345678">+263 71 234 5678</a>
-                </div>
-              </div>
-            </div>
-
-            <div className="footer-column">
-              <h3 className="footer-column-title">Located at</h3>
-              <div className="footer-links">
-                <div className="footer-location">
-                  <p>Bulawayo, Zimbabwe</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="footer-bottom">
-          <div className="footer-legal-links">
-            <a href="#!">Term of use</a>
-            <a href="#!">Privacy Policy</a>
-            <span>|</span>
-            <a href="#!">Accessibility assessment</a>
-          </div>
-
           <div className="footer-social">
-            <a href="#!" aria-label="Facebook"><FaFacebookF /></a>
-            <a href="#!" aria-label="TikTok"><FaTiktok /></a>
-            <a href="#!" aria-label="Instagram"><FaInstagram /></a>
-            <a href="#!" aria-label="LinkedIn"><FaLinkedinIn /></a>
-            <a href="#!" aria-label="WhatsApp"><FaWhatsapp /></a>
+            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="Facebook">
+              <FaFacebook />
+            </a>
+            <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="TikTok">
+              <FaTiktok />
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="LinkedIn">
+              <FaLinkedin />
+            </a>
+          </div>
+          <div className="footer-creator">
+            <p>created by Nomqhele N Moyo</p>
           </div>
         </div>
       </div>

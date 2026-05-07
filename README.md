@@ -15,7 +15,7 @@ Mthunzi Project Consultants is a professional project management firm establishe
 ## 🚀 Tech Stack
 
 - **React 18** - Modern UI library
-- **Express** - Server-side request handler for the visit form
+- **Vercel Serverless Functions** - Unified frontend and API deployment
 - **Supabase** - Database storage for visit requests
 - **Resend** - Admin notification email delivery
 - **React Icons** - Professional iconography
@@ -29,6 +29,7 @@ Before running this project, make sure you have:
 - A Supabase project with a `visit_requests` table
 - A Resend account with a verified sending domain or inbox
 - Access to the admin mailbox that should receive visit request alerts
+- A Vercel project configured for this repository
 
 ## 🔧 Installation
 
@@ -48,14 +49,16 @@ npm install
    - `RESEND_API_KEY`
    - `RESEND_FROM_EMAIL`
    - `ADMIN_EMAIL`
-   - `CLIENT_ORIGIN`
-   - `REACT_APP_VISIT_REQUEST_API_URL`
+   - `REACT_APP_VISIT_REQUEST_API_URL` only if you want to override the default `/api/visit-request` path locally
 
 4. Create the `visit_requests` table in Supabase with these columns:
    - `visitor_name`
    - `visitor_email`
    - `visit_date`
    - `notes`
+   - `created_at`
+
+5. Apply the SQL migration in `supabase/migrations/20260506_create_visit_requests.sql`.
 
 ## 🏃‍♂️ Running the Application
 
@@ -66,12 +69,10 @@ npm start
 
 The application will open at [http://localhost:3000](http://localhost:3000)
 
-Start the secure backend in a second terminal:
+For a full-stack local run that matches Vercel routing, use the Vercel CLI:
 ```bash
-npm run server
+vercel dev
 ```
-
-The API listens on [http://localhost:4000](http://localhost:4000) and the React app proxies `/api/visit-request` there during development.
 
 ## 📦 Building for Production
 
@@ -82,20 +83,19 @@ npm run build
 
 The build folder will contain the production-ready files.
 
-## 🌐 Deploying to GitHub Pages
+## 🌐 Deploying to Vercel
 
-This project is configured for GitHub Pages deployment.
+This project is configured for a unified Vercel deployment.
 
-Publish the site with:
+Deploy by connecting the repository to Vercel and using the default build settings. Vercel will build the React frontend and serve the API route from `api/visit-request.js` in the same project.
 
-```bash
-npm run deploy
-```
+Required environment variables on Vercel:
 
-After deployment, your site will be available at:
-https://nomqhelen2-prog.github.io/mthunzipc
-
-Important: GitHub Pages can host the frontend, but it cannot run the secure server-side visit request handler. The React app must call a separately hosted backend or serverless function for the form to insert into Supabase and send the admin email.
+- `SUPABASE_URL`
+- `SUPABASE_ANON_KEY`
+- `RESEND_API_KEY`
+- `RESEND_FROM_EMAIL`
+- `ADMIN_EMAIL`
 
 ## 🎨 Design Features
 
@@ -133,6 +133,8 @@ The visit request form now uses a server-side handler with these protections:
 - Server-side secret management through environment variables
 
 The browser only sends the request payload. Supabase and Resend credentials stay on the server.
+
+The serverless function lives at `/api/visit-request` and is implemented in [api/visit-request.js](api/visit-request.js).
 
 ## 📞 Contact Information
 

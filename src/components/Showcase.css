@@ -88,7 +88,6 @@
   font-weight: 600;
   letter-spacing: 1px;
   text-transform: uppercase;
-  border-radius: 2px;
   transition: all 0.3s ease;
   box-shadow: 0 4px 15px rgba(180, 146, 106, 0.3);
 }
