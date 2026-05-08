@@ -270,3 +270,53 @@
     flex-shrink: 0;
   }
 }
+
+/* Improve mobile layout: remove fixed heights and move navigation below content */
+@media (max-width: 480px) {
+  .about-container-split {
+    grid-template-columns: 1fr;
+  }
+
+  .about-left,
+  .about-right {
+    padding: 30px 20px;
+  }
+
+  /* Let slides size naturally instead of forcing fixed heights */
+  .about-carousel,
+  .about-slide,
+  .about-slides {
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .about-slide {
+    padding-bottom: 10px;
+  }
+
+  /* Place navigation under the carousel to avoid overlaying text */
+  .about-navigation {
+    position: static;
+    right: auto;
+    top: auto;
+    transform: none;
+    margin-top: 18px;
+    align-items: center;
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .about-dots {
+    flex-direction: row;
+    gap: 10px;
+  }
+
+  .about-dot {
+    width: 12px;
+    height: 12px;
+  }
+
+  .about-slide-content {
+    padding-bottom: 8px;
+  }
+}
