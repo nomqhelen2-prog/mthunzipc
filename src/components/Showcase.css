@@ -1,0 +1,136 @@
+.showcase {
+  position: relative;
+  min-height: 82vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background-color: #4A3121;
+  margin-top: 0;
+  padding-top: 64px;
+  padding-bottom: 34px;
+}
+
+.showcase-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.showcase-background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.showcase-background-image.active {
+  opacity: 1;
+}
+
+.showcase-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(74, 49, 33, 0.24);
+  z-index: 1;
+}
+
+.showcase-container {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.showcase-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 0;
+}
+
+.showcase-title {
+  font-size: 54px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 30px;
+  line-height: 1.2;
+  text-shadow: 2px 4px 10px rgba(0, 0, 0, 0.3);
+  letter-spacing: -1px;
+}
+
+.showcase-subtitle {
+  font-size: 19px;
+  color: var(--soft-cream);
+  margin-bottom: 50px;
+  line-height: 1.8;
+  font-weight: 300;
+  max-width: 750px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.showcase-cta {
+  background-color: var(--golden-tan);
+  color: var(--white);
+  padding: 18px 48px;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(180, 146, 106, 0.3);
+}
+
+.showcase-cta:hover {
+  background-color: #9F7D57;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(180, 146, 106, 0.4);
+}
+
+@media (max-width: 768px) {
+  .showcase {
+    min-height: 74vh;
+    padding-top: 48px;
+  }
+
+  .showcase-background-image {
+    background-position: center;
+    font-size: 18px;
+    margin-bottom: 40px;
+  }
+
+  .showcase-cta {
+    padding: 16px 36px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .showcase {
+    min-height: 70vh;
+    padding-top: 42px;
+  }
+
+  .showcase-background-image {
+    background-position: center 64%;
+  }
+
+  .showcase-title {
+    font-size: 32px;
+  }
+
+  .showcase-subtitle {
+    font-size: 16px;
+  }
+}
