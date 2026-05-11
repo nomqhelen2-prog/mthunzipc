@@ -4,14 +4,15 @@ const sanitizeHtml = require('sanitize-html');
 const validator = require('validator');
 
 const SUPABASE_URL = process.env.SUPABASE_URL;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 const RESEND_API_KEY = process.env.RESEND_API_KEY;
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 const RESEND_FROM_EMAIL = process.env.RESEND_FROM_EMAIL;
 
 const supabase =
-  SUPABASE_URL && SUPABASE_ANON_KEY
-    ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+  SUPABASE_URL && (SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY)
+    ? createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY)
     : null;
 
 const resend = RESEND_API_KEY ? new Resend(RESEND_API_KEY) : null;
@@ -90,6 +91,14 @@ const ensureDependencies = () => {
   }
 };
 
+const getSafeErrorMessage = (error) => {
+  if (error && typeof error.message === 'string' && error.message.trim()) {
+    return error.message.trim();
+  }
+
+  return 'Error';
+};
+
 const rateLimitVisitRequest = (ip) => {
   const now = Date.now();
   const lastSubmissionAt = recentSubmissionsByIp.get(ip);
@@ -163,5 +172,6 @@ const submitVisitRequest = async (payload, requestMeta = {}) => {
 };
 
 module.exports = {
-  submitVisitRequest
+  submitVisitRequest,
+  getSafeErrorMessage
 };

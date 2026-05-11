@@ -45,7 +45,7 @@ npm install
 
 3. Create a `.env` file from `.env.example` and set these values:
    - `SUPABASE_URL`
-   - `SUPABASE_ANON_KEY`
+   - `SUPABASE_SERVICE_ROLE_KEY`
    - `RESEND_API_KEY`
    - `RESEND_FROM_EMAIL`
    - `ADMIN_EMAIL`
@@ -92,7 +92,7 @@ Deploy by connecting the repository to Vercel and using the default build settin
 Required environment variables on Vercel:
 
 - `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
 - `RESEND_API_KEY`
 - `RESEND_FROM_EMAIL`
 - `ADMIN_EMAIL`

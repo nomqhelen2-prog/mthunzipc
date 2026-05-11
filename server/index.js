@@ -2,7 +2,7 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const dotenv = require('dotenv');
-const { submitVisitRequest } = require('./visitRequestService');
+const { submitVisitRequest, getSafeErrorMessage } = require('./visitRequestService');
 
 dotenv.config();
 
@@ -45,12 +45,12 @@ app.post('/api/visit-request', async (req, res) => {
     return res.status(200).json({ status: 'Success', message: 'Success' });
   } catch (error) {
     console.error('Visit request submission failed.', error);
-    return res.status(500).json({ status: 'Error', message: 'Error' });
+    return res.status(500).json({ status: 'Error', message: getSafeErrorMessage(error) });
   }
 });
 
 app.use((_req, res) => {
-  res.status(404).json({ status: 'Error', message: 'Error' });
+  res.status(404).json({ status: 'Error', message: 'Not found.' });
 });
 
 app.listen(port, () => {
