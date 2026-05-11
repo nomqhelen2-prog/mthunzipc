@@ -282,16 +282,32 @@
     padding: 30px 20px;
   }
 
-  /* Let slides size naturally instead of forcing fixed heights */
+  .about-right {
+    display: block;
+    overflow: visible;
+  }
+
+  /* Keep a consistent slide height so the page does not jump between slides */
   .about-carousel,
   .about-slide,
   .about-slides {
-    height: auto !important;
-    min-height: 0 !important;
+    height: 440px !important;
+    min-height: 440px !important;
+  }
+
+  .about-carousel {
+    overflow: hidden;
+  }
+
+  .about-slides {
+    display: flex;
+    transition: transform 0.6s ease-in-out;
   }
 
   .about-slide {
-    padding-bottom: 10px;
+    display: flex;
+    align-items: flex-start;
+    padding-bottom: 0;
   }
 
   /* Place navigation under the carousel to avoid overlaying text */
@@ -317,6 +333,9 @@
   }
 
   .about-slide-content {
+    max-height: 100%;
+    overflow-y: auto;
+    padding-right: 8px;
     padding-bottom: 8px;
   }
 }

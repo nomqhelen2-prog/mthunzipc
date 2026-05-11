@@ -80,7 +80,12 @@ const About = () => {
   return (
     <section id="about" className="about">
       <div className="about-container-split">
-        <div className="about-left" style={{ backgroundImage: `linear-gradient(rgba(74, 49, 33, 0.28), rgba(74, 49, 33, 0.72)), url(${ABOUT_BACKDROP})` }}>
+        <div 
+          className="about-left" 
+          style={{ backgroundImage: `linear-gradient(rgba(74, 49, 33, 0.28), rgba(74, 49, 33, 0.72)), url(${ABOUT_BACKDROP})` }}
+          role="img"
+          aria-label="Mthunzi Project Consultants - Professional project management and oversight services in Bulawayo"
+        >
           <div className="about-left-content">
             <h3 className="about-left-heading">What Makes Us Different</h3>
             <ul className="about-left-list">
@@ -104,7 +109,10 @@ const About = () => {
               style={{ transform: `translateY(-${currentSlide * 100}%)` }}
             >
               {slides.map((slide, index) => (
-                <div key={index} className="about-slide">
+                <div
+                  key={index}
+                  className={`about-slide ${index === currentSlide ? 'active' : ''}`}
+                >
                   <div className="about-slide-content">
                     <h3 className="about-heading">{slide.heading}</h3>
                     {slide.content}

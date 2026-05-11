@@ -36,6 +36,8 @@ const Showcase = () => {
             key={image}
             className={`showcase-background-image ${index === currentImageIndex ? 'active' : ''}`}
             style={{ backgroundImage: `url(${image})` }}
+            role="img"
+            aria-label={`Mthunzi Project Consultants - Site Supervision and Project Management in Bulawayo, Zimbabwe. Image ${index + 1} of ${SHOWCASE_IMAGES.length}`}
           />
         ))}
       </div>
@@ -48,9 +50,7 @@ const Showcase = () => {
             in Every Build
           </h1>
           <p className="showcase-subtitle">
-            We are a professional project management firm. We do not build.
-            <br />
-            We manage, coordinate, supervise, and control to protect your money and time.
+            Expert oversight, cost control, and trusted representation for property owners in Zimbabwe and abroad.
           </p>
           <button className="showcase-cta" onClick={scrollToServices}>
             View Our Services

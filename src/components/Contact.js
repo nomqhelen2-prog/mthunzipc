@@ -211,7 +211,7 @@ const Contact = () => {
               </div>
               <div className="contact-details">
                 <h4>Phone</h4>
-                <p>+263 XX XXX XXXX</p>
+                <p>+263 78 439 3141</p>
               </div>
             </div>
 
@@ -221,7 +221,7 @@ const Contact = () => {
               </div>
               <div className="contact-details">
                 <h4>Email</h4>
-                <p>{CONSULTATION_EMAIL_ADDRESS}</p>
+                <p>mthunziprojectconsultants@gmail.com</p>
               </div>
             </div>
 
