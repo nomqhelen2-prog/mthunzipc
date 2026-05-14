@@ -85,10 +85,6 @@ const ensureDependencies = () => {
   if (!supabase) {
     throw new Error('Supabase environment variables are not configured.');
   }
-
-  if (!resend || !ADMIN_EMAIL || !RESEND_FROM_EMAIL) {
-    throw new Error('Email delivery environment variables are not configured.');
-  }
 };
 
 const getSafeErrorMessage = (error) => {
@@ -150,25 +146,36 @@ const submitVisitRequest = async (payload, requestMeta = {}) => {
     throw insertError;
   }
 
-  // Only after a successful database insert do we notify the admin mailbox.
-  // That keeps the email aligned with the persisted record and avoids false alerts.
-  await resend.emails.send({
-    from: RESEND_FROM_EMAIL,
-    to: [ADMIN_EMAIL],
-    replyTo: normalized.visitorEmail,
-    subject: 'New Visit Request',
-    text: [
-      'A new visit request was submitted.',
-      '',
-      `Name: ${insertedRow.visitor_name}`,
-      `Email: ${insertedRow.visitor_email}`,
-      `Visit date: ${insertedRow.visit_date}`,
-      `Notes: ${insertedRow.notes || 'No notes provided'}`,
-      `Submitted at: ${normalized.submittedAt}`
-    ].join('\n')
-  });
+  const canSendEmail = Boolean(resend && ADMIN_EMAIL && RESEND_FROM_EMAIL);
+  let notificationSent = false;
 
-  return { success: true, message: 'Success' };
+  // A saved request is considered successful even if notification delivery is transiently unavailable.
+  if (canSendEmail) {
+    try {
+      await resend.emails.send({
+        from: RESEND_FROM_EMAIL,
+        to: [ADMIN_EMAIL],
+        replyTo: normalized.visitorEmail,
+        subject: 'New Visit Request',
+        text: [
+          'A new visit request was submitted.',
+          '',
+          `Name: ${insertedRow.visitor_name}`,
+          `Email: ${insertedRow.visitor_email}`,
+          `Visit date: ${insertedRow.visit_date}`,
+          `Notes: ${insertedRow.notes || 'No notes provided'}`,
+          `Submitted at: ${normalized.submittedAt}`
+        ].join('\n')
+      });
+      notificationSent = true;
+    } catch (emailError) {
+      console.error('Visit request email notification failed.', emailError);
+    }
+  } else {
+    console.warn('Visit request saved without email notification. Email environment variables are incomplete.');
+  }
+
+  return { success: true, message: 'Success', notificationSent };
 };
 
 module.exports = {
