@@ -4,7 +4,6 @@ import './Contact.css';
 
 const VISIT_REQUEST_ENDPOINT =
   process.env.REACT_APP_VISIT_REQUEST_API_URL || '/api/visit-request';
-const CONSULTATION_EMAIL_ADDRESS = 'info@mthunzipc.co.zw';
 const NAME_REGEX = /^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,100}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_NOTES_LENGTH = 2000;

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   FaUsers,
   FaFileInvoiceDollar,
@@ -18,48 +18,51 @@ const Services = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredServices, setFilteredServices] = useState([]);
 
-  const services = [
-    {
-      id: 'construction-management',
-      icon: <FaUsers />,
-      title: 'Construction & Renovation Management',
-      description:
-        'End-to-end project oversight ensuring your build stays on scope, timeline, and quality.',
-      keywords: ['construction', 'management', 'supervision', 'oversight', 'coordination']
-    },
-    {
-      id: 'cost-control',
-      icon: <FaFileInvoiceDollar />,
-      title: 'Cost Control & Budget Tracking',
-      description:
-        'Budget protection through detailed expense tracking and cost scrutiny.',
-      keywords: ['budget', 'cost', 'control', 'financial', 'tracking', 'expenses']
-    },
-    {
-      id: 'contractor-accountability',
-      icon: <FaClipboardCheck />,
-      title: 'Contractor Accountability & Supervision',
-      description:
-        'Detailed contractor tracking with accountability, quality verification, and transparent reporting.',
-      keywords: ['contractor', 'accountability', 'supervision', 'quality', 'assurance', 'documentation']
-    },
-    {
-      id: 'diaspora-services',
-      icon: <FaGlobeAmericas />,
-      title: 'Diaspora \'Eyes-on-the-Ground\' Services',
-      description:
-        'Your trusted eyes-on-the-ground in Bulawayo providing site visits, updates, and advocacy for overseas owners.',
-      keywords: ['diaspora', 'representation', 'overseas', 'property', 'eyes-on-ground', 'zimbabwe']
-    },
-    {
-      id: 'feasibility-studies',
-      icon: <FaChartLine />,
-      title: 'Feasibility Studies & Advisory',
-      description:
-        'Viability analysis, cost projections, and risk assessment before you invest.',
-      keywords: ['feasibility', 'advisory', 'analysis', 'assessment', 'guidance']
-    }
-  ];
+  const services = useMemo(
+    () => [
+      {
+        id: 'construction-management',
+        icon: <FaUsers />,
+        title: 'Construction & Renovation Management',
+        description:
+          'End-to-end project oversight ensuring your build stays on scope, timeline, and quality.',
+        keywords: ['construction', 'management', 'supervision', 'oversight', 'coordination']
+      },
+      {
+        id: 'cost-control',
+        icon: <FaFileInvoiceDollar />,
+        title: 'Cost Control & Budget Tracking',
+        description:
+          'Budget protection through detailed expense tracking and cost scrutiny.',
+        keywords: ['budget', 'cost', 'control', 'financial', 'tracking', 'expenses']
+      },
+      {
+        id: 'contractor-accountability',
+        icon: <FaClipboardCheck />,
+        title: 'Contractor Accountability & Supervision',
+        description:
+          'Detailed contractor tracking with accountability, quality verification, and transparent reporting.',
+        keywords: ['contractor', 'accountability', 'supervision', 'quality', 'assurance', 'documentation']
+      },
+      {
+        id: 'diaspora-services',
+        icon: <FaGlobeAmericas />,
+        title: 'Diaspora \'Eyes-on-the-Ground\' Services',
+        description:
+          'Your trusted eyes-on-the-ground in Bulawayo providing site visits, updates, and advocacy for overseas owners.',
+        keywords: ['diaspora', 'representation', 'overseas', 'property', 'eyes-on-ground', 'zimbabwe']
+      },
+      {
+        id: 'feasibility-studies',
+        icon: <FaChartLine />,
+        title: 'Feasibility Studies & Advisory',
+        description:
+          'Viability analysis, cost projections, and risk assessment before you invest.',
+        keywords: ['feasibility', 'advisory', 'analysis', 'assessment', 'guidance']
+      }
+    ],
+    []
+  );
 
   useEffect(() => {
     const query = searchQuery.toLowerCase().trim();
