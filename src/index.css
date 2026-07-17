@@ -13,23 +13,26 @@
 }
 
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: var(--deep-cocoa);
   background-color: var(--soft-cream);
-  line-height: 1.6;
+  line-height: 1.7;
+  /* Kept on body (not a wrapper div) so it doesn't create a scroll
+     container that breaks position: sticky on descendants like the navbar. */
+  overflow-x: hidden;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: 'Playfair Display', serif;
+  font-family: Georgia, 'Times New Roman', serif;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1.25;
   color: var(--deep-cocoa);
 }
 
 button {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
   cursor: pointer;
   border: none;
   outline: none;
@@ -42,7 +45,7 @@ a {
 }
 
 input, textarea {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
 }
 
 /* Smooth scrolling */

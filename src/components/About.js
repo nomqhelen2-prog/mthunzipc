@@ -1,142 +1,89 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import './About.css';
 
 const ABOUT_BACKDROP = `${process.env.PUBLIC_URL}/Gemini_Generated_Image_j19pi1j19pi1j19p.png`;
 
-/**
- * Company story section that cycles through the firm's core values and purpose.
- */
+const DIFFERENTIATORS = [
+  {
+    title: 'Accountability',
+    description: 'We document every decision and keep a clear paper trail, so nothing is left to memory or assumption.'
+  },
+  {
+    title: 'Client-First',
+    description: "We act in your best interests at all times — not the contractor's, not the supplier's."
+  },
+  {
+    title: 'Cost Integrity',
+    description: 'We challenge poor workmanship and inflated costs before they become your problem.'
+  },
+  {
+    title: 'Professionalism',
+    description: 'We operate with structure and discipline, not informal arrangements and guesswork.'
+  },
+  {
+    title: 'Prevention',
+    description: 'We focus on preventing problems before they happen, not managing damage after the fact.'
+  }
+];
 
 const About = () => {
-  const [currentSlide, setCurrentSlide] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
-
-  const slides = [
-    {
-      heading: 'Get to Know Us',
-      content: (
-        <>
-          <p className="about-intro">
-            Founded in 2025, Mthunzi Project Consultants was established with the vision of becoming 
-            Zimbabwe's leading provider of cost and project management services. Guided by integrity 
-            and driven by accuracy, we uphold these core values as the foundation of our commitment 
-            to delivering excellence to every client.
-          </p>
-        </>
-      )
-    },
-    {
-      heading: 'Our Core Values',
-      content: (
-        <>
-          <p className="about-intro">
-            It was important to us to build a value driven business. At its core, we believe in: 
-            Simplicity, Affordability, Authenticity, Quality, Transparency.
-          </p>
-          <div className="values-list">
-            <div className="value-item">
-              <h4 className="value-name">Integrity</h4>
-              <p className="value-description">We operate with honesty and transparency in every interaction, ensuring trust is at the core of our relationships.</p>
-            </div>
-            <div className="value-item">
-              <h4 className="value-name">Accountability</h4>
-              <p className="value-description">We take full responsibility for our commitments and hold all stakeholders to the highest standards of performance.</p>
-            </div>
-            <div className="value-item">
-              <h4 className="value-name">Transparency</h4>
-              <p className="value-description">Clear communication and detailed documentation ensure you always know exactly what is happening with your project.</p>
-            </div>
-          </div>
-        </>
-      )
-    },
-    {
-      heading: 'Our Purpose',
-      content: (
-        <>
-          <p className="about-intro">
-            Our purpose is to solve the lack of accountability, poor cost control, delays, and stress 
-            experienced by property owners when projects are unmanaged. We act in our clients' best 
-            interests at all times, challenging poor workmanship and inflated costs while focusing on 
-            prevention rather than damage control.
-          </p>
-        </>
-      )
-    }
-  ];
-
-  useEffect(() => {
-    if (isPaused) {
-      return undefined;
-    }
-
-    const interval = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
-    }, 6000);
-
-    return () => clearInterval(interval);
-  }, [isPaused, slides.length]);
-
   return (
-    <section id="about" className="about">
-      <div className="about-container-split">
-        <div 
-          className="about-left" 
-          style={{ backgroundImage: `linear-gradient(rgba(74, 49, 33, 0.28), rgba(74, 49, 33, 0.72)), url(${ABOUT_BACKDROP})` }}
-          role="img"
-          aria-label="Mthunzi Project Consultants - Professional project management and oversight services in Bulawayo"
-        >
-          <div className="about-left-content">
-            <h3 className="about-left-heading">What Makes Us Different</h3>
-            <ul className="about-left-list">
-              <li>We prioritize accountability and documentation</li>
-              <li>We act in the client's best interests at all times</li>
-              <li>We challenge poor workmanship and inflated costs</li>
-              <li>We operate with professionalism, not informality</li>
-              <li>We focus on prevention of problems, not damage control</li>
-            </ul>
-          </div>
-        </div>
+    <>
+      <section id="about" className="about">
+        <div className="about-container-split">
+          <div 
+            className="about-left" 
+            style={{ backgroundImage: `linear-gradient(rgba(74, 49, 33, 0.28), rgba(74, 49, 33, 0.72)), url(${ABOUT_BACKDROP})` }}
+            role="img"
+            aria-label="Mthunzi Project Consultants - Professional project management and oversight services in Bulawayo"
+          />
 
-        <div className="about-right">
-          <div
-            className="about-carousel"
-            onMouseEnter={() => setIsPaused(true)}
-            onMouseLeave={() => setIsPaused(false)}
-          >
-            <div 
-              className="about-slides" 
-              style={{ transform: `translateY(-${currentSlide * 100}%)` }}
-            >
-              {slides.map((slide, index) => (
-                <div
-                  key={index}
-                  className={`about-slide ${index === currentSlide ? 'active' : ''}`}
-                >
-                  <div className="about-slide-content">
-                    <h3 className="about-heading">{slide.heading}</h3>
-                    {slide.content}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-          
-          <div className="about-navigation">
-            <div className="about-dots">
-              {slides.map((_, index) => (
-                <span 
-                  key={index} 
-                  className={`about-dot ${index === currentSlide ? 'active' : ''}`}
-                  onMouseEnter={() => setCurrentSlide(index)}
-                  onClick={() => setCurrentSlide(index)}
-                />
-              ))}
+          <div className="about-right">
+            <div className="about-list-section">
+              <div className="about-list-item">
+                <h3 className="about-heading">Our Mission</h3>
+                <p className="about-intro">
+                  Deliver reliable, efficient and professional construction and project management services that protect investment, improve outcomes, and provide clarity for every client.
+                </p>
+              </div>
+
+              <div className="about-list-item">
+                <h3 className="about-heading">Our Vision</h3>
+                <p className="about-intro">
+                  To become the trusted oversight partner for property owners and Diaspora clients, known for transparent delivery, strong cost control, and high-quality project performance.
+                </p>
+              </div>
+
+              <div className="about-list-item">
+                <h3 className="about-heading">Core Values</h3>
+                <ul className="core-values-list">
+                  <li><strong>Integrity</strong> — We act honestly and transparently in every decision.</li>
+                  <li><strong>Accountability</strong> — We take responsibility for commitments and outcomes.</li>
+                  <li><strong>Transparency</strong> — We keep clients informed with clear reporting and open communication.</li>
+                  <li><strong>Quality</strong> — We insist on strong workmanship, accurate oversight, and measurable results.</li>
+                  <li><strong>Professionalism</strong> — We maintain high standards in every interaction.</li>
+                </ul>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section className="about-values">
+        <div className="container">
+          <h3 className="about-values-title">What Makes Us Different</h3>
+          <div className="values-list">
+            {DIFFERENTIATORS.map((item, index) => (
+              <div className="value-item" key={item.title}>
+                <span className="value-index">{index + 1}</span>
+                <h4 className="value-title">{item.title}</h4>
+                <p className="value-description">{item.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </>
   );
 };
 

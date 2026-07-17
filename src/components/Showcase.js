@@ -21,8 +21,8 @@ const Showcase = () => {
     return () => window.clearInterval(intervalId);
   }, []);
 
-  const scrollToServices = () => {
-    const element = document.getElementById('services');
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
     }
@@ -52,9 +52,14 @@ const Showcase = () => {
           <p className="showcase-subtitle">
             Expert oversight, cost control, and trusted representation for property owners in Zimbabwe and abroad.
           </p>
-          <button className="showcase-cta" onClick={scrollToServices}>
-            View Our Services
-          </button>
+          <div className="showcase-cta-group">
+            <button className="showcase-cta" onClick={() => scrollToSection('services')}>
+              Our Services
+            </button>
+            <button className="showcase-cta-outline" onClick={() => scrollToSection('contact')}>
+              Request a Consultation
+            </button>
+          </div>
         </div>
       </div>
     </section>

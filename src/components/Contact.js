@@ -1,21 +1,41 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
+import emailjs from '@emailjs/browser';
+import { FaEnvelope, FaWhatsapp, FaMapMarkerAlt } from 'react-icons/fa';
 import './Contact.css';
 
-const VISIT_REQUEST_ENDPOINT =
-  process.env.REACT_APP_VISIT_REQUEST_API_URL || '/api/visit-request';
-const NAME_REGEX = /^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,100}$/;
+const EMAILJS_SERVICE_ID = process.env.REACT_APP_EMAILJS_SERVICE_ID;
+const EMAILJS_TEMPLATE_ID = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
+const EMAILJS_PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
+const IS_EMAILJS_CONFIGURED = Boolean(EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY);
+
+const NAME_REGEX = /^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const MAX_NOTES_LENGTH = 2000;
+const PHONE_REGEX = /^[0-9+()\-\s]{7,20}$/;
+const MAX_LOCATION_LENGTH = 150;
+const MAX_MESSAGE_LENGTH = 2000;
 const MIN_SUBMIT_DELAY_MS = 2000;
 const DEFAULT_SUBMISSION_ERROR_MESSAGE =
-  'Unable to send your request right now. Please try again or contact us directly.';
+  "We're having a small connection hiccup right now. Please try again in a few minutes, or contact us directly.";
+const NOT_CONFIGURED_ERROR_MESSAGE =
+  'This form is temporarily unavailable. Please reach us directly using the contact details alongside the form.';
+
+const SERVICE_OPTIONS = [
+  { value: 'construction-management', label: 'Construction & Renovation Management' },
+  { value: 'cost-control', label: 'Cost Control & Budget Tracking' },
+  { value: 'contractor-accountability', label: 'Contractor Accountability & Supervision' },
+  { value: 'diaspora-services', label: "Diaspora 'Eyes-on-the-Ground' Services" },
+  { value: 'feasibility-studies', label: 'Feasibility Studies & Advisory' },
+  { value: 'other', label: 'Other / Not Sure Yet' }
+];
 
 const getInitialFormData = () => ({
-  visitorName: '',
-  visitorEmail: '',
-  visitDate: '',
-  notes: '',
+  firstName: '',
+  surname: '',
+  email: '',
+  phone: '',
+  location: '',
+  serviceNeeded: '',
+  message: '',
   website: '',
   submittedAt: new Date().toISOString()
 });
@@ -23,36 +43,55 @@ const getInitialFormData = () => ({
 const normalizeText = (value) => value.trim().replace(/\s+/g, ' ');
 
 const normalizeFormData = (data) => ({
-  visitorName: normalizeText(data.visitorName),
-  visitorEmail: data.visitorEmail.trim().toLowerCase(),
-  visitDate: data.visitDate.trim(),
-  notes: data.notes.trim(),
+  firstName: normalizeText(data.firstName),
+  surname: normalizeText(data.surname),
+  email: data.email.trim().toLowerCase(),
+  phone: data.phone.trim(),
+  location: normalizeText(data.location),
+  serviceNeeded: data.serviceNeeded,
+  message: data.message.trim(),
   website: data.website.trim(),
   submittedAt: data.submittedAt
 });
 
 const validateFormData = (data) => {
-  if (!NAME_REGEX.test(data.visitorName)) {
-    return 'Please enter a valid name.';
+  if (!NAME_REGEX.test(data.firstName)) {
+    return 'Please enter a valid first name.';
   }
 
-  if (!EMAIL_REGEX.test(data.visitorEmail) || data.visitorEmail.length > 254) {
+  if (!NAME_REGEX.test(data.surname)) {
+    return 'Please enter a valid surname.';
+  }
+
+  if (!EMAIL_REGEX.test(data.email) || data.email.length > 254) {
     return 'Please enter a valid email address.';
   }
 
-  if (!data.visitDate || Number.isNaN(new Date(data.visitDate).getTime())) {
-    return 'Please choose a valid visit date.';
+  if (!PHONE_REGEX.test(data.phone)) {
+    return 'Please enter a valid phone or WhatsApp number.';
   }
 
-  if (data.notes.length > MAX_NOTES_LENGTH) {
-    return `Notes must be ${MAX_NOTES_LENGTH} characters or fewer.`;
+  if (!data.location || data.location.length > MAX_LOCATION_LENGTH) {
+    return 'Please enter your location.';
+  }
+
+  if (!data.serviceNeeded) {
+    return 'Please select the service you need.';
+  }
+
+  if (!data.message) {
+    return 'Please tell us a little about your project.';
+  }
+
+  if (data.message.length > MAX_MESSAGE_LENGTH) {
+    return `Message must be ${MAX_MESSAGE_LENGTH} characters or fewer.`;
   }
 
   return null;
 };
 
 /**
- * Visit request form and contact details for the site.
+ * Consultation request form and contact details for the site.
  */
 
 const Contact = () => {
@@ -62,6 +101,26 @@ const Contact = () => {
   const [submitStatus, setSubmitStatus] = useState(null);
   const [submitMessage, setSubmitMessage] = useState('');
   const formStartedAtRef = useRef(Date.now());
+
+  useEffect(() => {
+    if (!IS_EMAILJS_CONFIGURED) {
+      // eslint-disable-next-line no-console
+      console.warn(
+        'EmailJS is not configured. Set REACT_APP_EMAILJS_SERVICE_ID, REACT_APP_EMAILJS_TEMPLATE_ID, ' +
+          'and REACT_APP_EMAILJS_PUBLIC_KEY in your .env file.'
+      );
+      return;
+    }
+
+    try {
+      emailjs.init(EMAILJS_PUBLIC_KEY);
+    } catch (e) {
+      // init may already be called or fail in some environments;
+      // send() still receives the public key directly as a fallback.
+      // eslint-disable-next-line no-console
+      console.info('EmailJS init skipped or failed', e);
+    }
+  }, []);
 
   useEffect(() => {
     const sectionElement = sectionRef.current;
@@ -116,11 +175,10 @@ const Contact = () => {
 
     const sanitizedData = normalizeFormData(formData);
 
+    // Honeypot field: if filled, treat as spam and abort submission.
     if (sanitizedData.website) {
-      setSubmitStatus('success');
-      setSubmitMessage("Thank you! We'll be in touch within 24 hours.");
-      setFormData(getInitialFormData());
-      formStartedAtRef.current = Date.now();
+      setSubmitStatus('error');
+      setSubmitMessage('Submission blocked.');
       return;
     }
 
@@ -137,45 +195,45 @@ const Contact = () => {
       return;
     }
 
+    if (!IS_EMAILJS_CONFIGURED) {
+      setSubmitStatus('error');
+      setSubmitMessage(NOT_CONFIGURED_ERROR_MESSAGE);
+      return;
+    }
+
     setIsSubmitting(true);
 
-    const controller = new AbortController();
-    const timeoutId = window.setTimeout(() => controller.abort(), 10000);
+    const serviceLabel =
+      SERVICE_OPTIONS.find((option) => option.value === sanitizedData.serviceNeeded)?.label ||
+      sanitizedData.serviceNeeded;
 
     try {
-      const response = await fetch(VISIT_REQUEST_ENDPOINT, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json'
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        {
+          firstName: sanitizedData.firstName,
+          surname: sanitizedData.surname,
+          fullName: `${sanitizedData.firstName} ${sanitizedData.surname}`.trim(),
+          email: sanitizedData.email,
+          phone: sanitizedData.phone,
+          location: sanitizedData.location,
+          serviceNeeded: serviceLabel,
+          message: sanitizedData.message,
+          submittedAt: sanitizedData.submittedAt
         },
-        signal: controller.signal,
-        body: JSON.stringify(sanitizedData)
-      });
-
-      const responseData = await response.json().catch(() => null);
-      const wasSuccessful = response.ok && responseData?.status === 'Success';
-
-      if (!wasSuccessful) {
-        setSubmitStatus('error');
-        setSubmitMessage(responseData?.message || DEFAULT_SUBMISSION_ERROR_MESSAGE);
-        return;
-      }
+        EMAILJS_PUBLIC_KEY
+      );
 
       setSubmitStatus('success');
       setSubmitMessage("Thank you! We'll be in touch within 24 hours.");
       setFormData(getInitialFormData());
       formStartedAtRef.current = Date.now();
     } catch (error) {
-      console.error('Error submitting visit request.', error);
+      console.error('Error submitting consultation request.', error);
       setSubmitStatus('error');
-      setSubmitMessage(
-        error.name === 'AbortError'
-          ? 'The request timed out. Please try again.'
-          : DEFAULT_SUBMISSION_ERROR_MESSAGE
-      );
+      setSubmitMessage(DEFAULT_SUBMISSION_ERROR_MESSAGE);
     } finally {
-      window.clearTimeout(timeoutId);
       setIsSubmitting(false);
     }
   };
@@ -184,7 +242,7 @@ const Contact = () => {
     <section id="contact" className="contact" ref={sectionRef}>
       <div className="container">
         <div className="section-header">
-          <h2 className="section-title">REQUEST A VISIT</h2>
+          <h2 className="section-title">REQUEST A CONSULTATION</h2>
           <p className="section-subtitle">
             Share a few details and we will follow up with a consultation.
           </p>
@@ -206,11 +264,11 @@ const Contact = () => {
 
             <div className="contact-info-item">
               <div className="contact-icon">
-                <FaPhone />
+                <FaWhatsapp />
               </div>
               <div className="contact-details">
-                <h4>Phone</h4>
-                <p>+263 78 439 3141</p>
+                <h4>WhatsApp</h4>
+                <p><a href="https://wa.me/263784393141" target="_blank" rel="noopener noreferrer" className="contact-link">+263 78 439 3141</a></p>
               </div>
             </div>
 
@@ -220,7 +278,16 @@ const Contact = () => {
               </div>
               <div className="contact-details">
                 <h4>Email</h4>
-                <p>mthunziprojectconsultants@gmail.com</p>
+                <p>
+                  <a
+                    href="mailto:mthunziprojectconsultants@gmail.com?subject=Project%20Consultation"
+                    className="contact-link"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    mthunziprojectconsultants@gmail.com
+                  </a>
+                </p>
               </div>
             </div>
 
@@ -251,21 +318,37 @@ const Contact = () => {
                 <div className="form-group">
                   <input
                     type="text"
-                    name="visitorName"
-                    value={formData.visitorName}
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleChange}
-                    placeholder="Full Name *"
-                    autoComplete="name"
-                    maxLength="100"
-                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,100}"
+                    placeholder="First Name *"
+                    autoComplete="given-name"
+                    maxLength="50"
+                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}"
                     required
                   />
                 </div>
                 <div className="form-group">
                   <input
+                    type="text"
+                    name="surname"
+                    value={formData.surname}
+                    onChange={handleChange}
+                    placeholder="Surname *"
+                    autoComplete="family-name"
+                    maxLength="50"
+                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <input
                     type="email"
-                    name="visitorEmail"
-                    value={formData.visitorEmail}
+                    name="email"
+                    value={formData.email}
                     onChange={handleChange}
                     placeholder="Email Address *"
                     autoComplete="email"
@@ -273,26 +356,60 @@ const Contact = () => {
                     required
                   />
                 </div>
+                <div className="form-group">
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="Phone / WhatsApp Number *"
+                    autoComplete="tel"
+                    maxLength="20"
+                    required
+                  />
+                </div>
               </div>
 
               <div className="form-group">
                 <input
-                  type="date"
-                  name="visitDate"
-                  value={formData.visitDate}
+                  type="text"
+                  name="location"
+                  value={formData.location}
                   onChange={handleChange}
+                  placeholder="Location (Suburb, City) *"
+                  autoComplete="address-level2"
+                  maxLength={MAX_LOCATION_LENGTH}
                   required
                 />
               </div>
 
               <div className="form-group">
+                <select
+                  name="serviceNeeded"
+                  value={formData.serviceNeeded}
+                  onChange={handleChange}
+                  required
+                  aria-label="Service needed"
+                >
+                  <option value="" disabled>
+                    Service Needed *
+                  </option>
+                  {SERVICE_OPTIONS.map((option) => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
                 <textarea
-                  name="notes"
-                  value={formData.notes}
+                  name="message"
+                  value={formData.message}
                   onChange={handleChange}
                   placeholder="Tell us about your project..."
                   rows="5"
-                  maxLength={MAX_NOTES_LENGTH}
+                  maxLength={MAX_MESSAGE_LENGTH}
                   required
                 ></textarea>
               </div>

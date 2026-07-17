@@ -1,35 +1,97 @@
 import React from 'react';
-import { FaFacebook, FaTiktok, FaLinkedin } from 'react-icons/fa';
+import { FaEnvelope, FaWhatsapp } from 'react-icons/fa';
 import './Footer.css';
 
-/**
- * Site footer with links and social media.
- */
+const CONTACT_CHANNELS = [
+  {
+    icon: FaWhatsapp,
+    label: 'WhatsApp',
+    value: '+263 78 439 3141',
+    href: 'https://wa.me/263784393141'
+  },
+  {
+    icon: FaEnvelope,
+    label: 'Email',
+    value: 'mthunziprojectconsultants@gmail.com',
+    href: 'mailto:mthunziprojectconsultants@gmail.com'
+  }
+];
+
 const Footer = () => {
+  const scrollToSection = (id) => {
+    const element = document.getElementById(id);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
   return (
     <footer className="footer">
-      <div className="footer-container">
-        <div className="footer-content">
-          <div className="footer-links">
-            <a href="/terms" className="footer-link">Term of use</a>
-            <a href="/privacy" className="footer-link">Privacy Policy</a>
-            <a href="/accessibility" className="footer-link">Accessibility assessment</a>
+      <div className="footer-main">
+        <div className="footer-container">
+
+          {/* Column 1: About */}
+          <div className="footer-col">
+            <h4 className="footer-col-heading">ABOUT</h4>
+            <p className="footer-about-text">
+              Mthunzi Project Consultants provides professional project management and cost
+              oversight for property owners and diaspora clients in Zimbabwe.
+            </p>
+            {/* social links removed per request */}
           </div>
-          <div className="footer-social">
-            <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="Facebook">
-              <FaFacebook />
-            </a>
-            <a href="https://tiktok.com" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="TikTok">
-              <FaTiktok />
-            </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="social-icon" aria-label="LinkedIn">
-              <FaLinkedin />
-            </a>
+
+          {/* Column 2: Quick Links */}
+          <div className="footer-col">
+            <h4 className="footer-col-heading">QUICK LINKS</h4>
+            <ul className="footer-links-list">
+              <li><button onClick={() => scrollToSection('home')}>Home</button></li>
+              <li><button onClick={() => scrollToSection('services')}>Our Services</button></li>
+              <li><button onClick={() => scrollToSection('about')}>Who We Are</button></li>
+              <li><button onClick={() => scrollToSection('contact')}>Contact Us</button></li>
+            </ul>
           </div>
-          <div className="footer-creator">
-            <p>created by Nomqhele N Moyo</p>
+
+          {/* Column 3: Contact Info */}
+          <div className="footer-col">
+            <h4 className="footer-col-heading">CONTACT</h4>
+            <ul className="footer-contact-list">
+              {CONTACT_CHANNELS.map((channel) => {
+                const Icon = channel.icon;
+                return (
+                  <li key={channel.label}>
+                    <Icon className="footer-contact-icon" />
+                    <a
+                      href={channel.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      aria-label={`${channel.label} link`}
+                      className="footer-contact-link-text"
+                    >
+                      {channel.label}: {channel.value}
+                    </a>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
+
         </div>
+      </div>
+
+      <div className="footer-bottom">
+        <p>
+          © {new Date().getFullYear()} Mthunzi Project Consultants. Built by{' '}
+          <a
+            href="https://wa.me/263775047789"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="developer-link"
+            aria-label="Contact developer on WhatsApp"
+          >
+            Nomqhele N Moyo
+          </a>
+          .
+        </p>
       </div>
     </footer>
   );
