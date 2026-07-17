@@ -1,5 +1,6 @@
 import React from 'react';
 import { FaEnvelope, FaWhatsapp } from 'react-icons/fa';
+import { handleMailtoClick } from '../utils/email';
 import './Footer.css';
 
 const CONTACT_CHANNELS = [
@@ -57,13 +58,17 @@ const Footer = () => {
             <ul className="footer-contact-list">
               {CONTACT_CHANNELS.map((channel) => {
                 const Icon = channel.icon;
+                const isMailLink = channel.href.startsWith('mailto:');
                 return (
                   <li key={channel.label}>
                     <Icon className="footer-contact-icon" />
                     <a
                       href={channel.href}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      // mailto: links hand off to the OS mail client rather than
+                      // navigating, so target="_blank" only leaves a blank tab open.
+                      // A Gmail web-compose fallback is wired up via onClick instead.
+                      {...(!isMailLink && { target: '_blank', rel: 'noopener noreferrer' })}
+                      {...(isMailLink && { onClick: handleMailtoClick() })}
                       aria-label={`${channel.label} link`}
                       className="footer-contact-link-text"
                     >

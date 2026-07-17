@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import emailjs from '@emailjs/browser';
 import { FaEnvelope, FaWhatsapp, FaMapMarkerAlt } from 'react-icons/fa';
+import { handleMailtoClick } from '../utils/email';
 import './Contact.css';
 
 const EMAILJS_SERVICE_ID = process.env.REACT_APP_EMAILJS_SERVICE_ID;
@@ -282,8 +283,7 @@ const Contact = () => {
                   <a
                     href="mailto:mthunziprojectconsultants@gmail.com?subject=Project%20Consultation"
                     className="contact-link"
-                    target="_blank"
-                    rel="noopener noreferrer"
+                    onClick={handleMailtoClick('Project Consultation')}
                   >
                     mthunziprojectconsultants@gmail.com
                   </a>
