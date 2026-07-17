@@ -8,7 +8,7 @@ const EMAILJS_TEMPLATE_ID = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
 const EMAILJS_PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
 const IS_EMAILJS_CONFIGURED = Boolean(EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY);
 
-const NAME_REGEX = /^[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}$/;
+const NAME_REGEX = /^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]{2,50}$/;
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const PHONE_REGEX = /^[0-9+()\-\s]{7,20}$/;
 const MAX_LOCATION_LENGTH = 150;
@@ -324,7 +324,7 @@ const Contact = () => {
                     placeholder="First Name *"
                     autoComplete="given-name"
                     maxLength="50"
-                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}"
+                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s'\-]{2,50}"
                     required
                   />
                 </div>
@@ -337,7 +337,7 @@ const Contact = () => {
                     placeholder="Surname *"
                     autoComplete="family-name"
                     maxLength="50"
-                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ' -]{2,50}"
+                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s'\-]{2,50}"
                     required
                   />
                 </div>
