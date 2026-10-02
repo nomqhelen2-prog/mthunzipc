@@ -15,6 +15,7 @@ Mthunzi Project Consultants is a professional project management firm establishe
 ## Tech Stack
 
 - **React 18** - Modern UI library
+- **React Router 6** - Client-side routing between pages
 - **EmailJS** - Client-side contact form email delivery (no backend required)
 - **React Icons** - Professional iconography
 - **CSS3** - Custom styling with CSS variables
@@ -75,7 +76,7 @@ This project is a static React app. Connect the repository to Vercel and use the
 - **Soft Cream** (#F2EADC) - Background
 
 ### Typography
-- **Playfair Display** - Elegant serif for headings
+- **Arial** - Headings
 - **Inter** - Clean sans-serif for body text
 
 ### Professional Aesthetic
@@ -84,12 +85,16 @@ This project is a static React app. Connect the repository to Vercel and use the
 - Ample white space
 - Sophisticated color scheme
 
-## Sections
+## Pages
 
-1. **Showcase** - Powerful headline with clear value proposition
-2. **Services** - Auto-scrolling carousel highlighting core service offerings
-3. **About** - Company story, mission/vision/values, and what makes MPC different
-4. **Contact** - Professional form for consultation requests
+The site is a multi-page app (client-side routed with React Router). Navbar and footer are shared across every page.
+
+1. **Home** (`/`) - Hero banner with a clear value proposition and CTAs into Services/Contact
+2. **Services** (`/services`) - Auto-scrolling carousel highlighting core service offerings
+3. **About** (`/about`) - Company story, mission/vision/values, and what makes MPC different
+4. **Contact** (`/contact`) - Professional form for consultation requests
+
+Since this is client-side routing on a single-page-app build, `vercel.json` rewrites every path to `/index.html` so deep links (e.g. sharing `/services` directly) and page refreshes work correctly on Vercel.
 
 ## Contact Form Security
 

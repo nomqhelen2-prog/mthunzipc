@@ -1,10 +1,14 @@
 import React, { useEffect } from 'react';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Showcase from './components/Showcase';
 import Services from './components/Services';
 import About from './components/About';
 import Contact from './components/Contact';
+import PrivacyPolicy from './components/PrivacyPolicy';
+import TermsOfUse from './components/TermsOfUse';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 import './App.css';
 
 function App() {
@@ -47,7 +51,7 @@ function App() {
         '@type': 'RequestAction',
         target: {
           '@type': 'EntryPoint',
-          urlTemplate: 'https://www.mthunzipc.co.zw/#contact'
+          urlTemplate: 'https://www.mthunzipc.co.zw/contact'
         }
       },
       sameAs: [],
@@ -63,11 +67,17 @@ function App() {
 
   return (
     <div className="App">
+      <ScrollToTop />
       <Navbar />
-      <Showcase />
-      <Services />
-      <About />
-      <Contact />
+      <Routes>
+        <Route path="/" element={<Showcase />} />
+        <Route path="/services" element={<Services />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-of-use" element={<TermsOfUse />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
       <Footer />
     </div>
   );

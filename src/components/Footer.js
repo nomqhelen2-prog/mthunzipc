@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { FaEnvelope, FaWhatsapp } from 'react-icons/fa';
 import { handleMailtoClick } from '../utils/email';
 import './Footer.css';
@@ -7,8 +8,8 @@ const CONTACT_CHANNELS = [
   {
     icon: FaWhatsapp,
     label: 'WhatsApp',
-    value: '+263 78 439 3141',
-    href: 'https://wa.me/263784393141'
+    value: '+263 78 875 6305',
+    href: 'https://wa.me/263788756305'
   },
   {
     icon: FaEnvelope,
@@ -19,12 +20,7 @@ const CONTACT_CHANNELS = [
 ];
 
 const Footer = () => {
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  const navigate = useNavigate();
 
   return (
     <footer className="footer">
@@ -45,10 +41,10 @@ const Footer = () => {
           <div className="footer-col">
             <h4 className="footer-col-heading">QUICK LINKS</h4>
             <ul className="footer-links-list">
-              <li><button onClick={() => scrollToSection('home')}>Home</button></li>
-              <li><button onClick={() => scrollToSection('services')}>Our Services</button></li>
-              <li><button onClick={() => scrollToSection('about')}>Who We Are</button></li>
-              <li><button onClick={() => scrollToSection('contact')}>Contact Us</button></li>
+              <li><button onClick={() => navigate('/')}>Home</button></li>
+              <li><button onClick={() => navigate('/services')}>Services</button></li>
+              <li><button onClick={() => navigate('/about')}>About Us</button></li>
+              <li><button onClick={() => navigate('/contact')}>Contact Us</button></li>
             </ul>
           </div>
 
@@ -85,7 +81,7 @@ const Footer = () => {
 
       <div className="footer-bottom">
         <p>
-          © {new Date().getFullYear()} Mthunzi Project Consultants. Built by{' '}
+          © {new Date().getFullYear()} Mthunzi Project Consultants. Website built by{' '}
           <a
             href="https://wa.me/263775047789"
             target="_blank"
@@ -96,6 +92,11 @@ const Footer = () => {
             Nomqhele N Moyo
           </a>
           .
+        </p>
+        <p className="footer-legal-links">
+          <button onClick={() => navigate('/privacy-policy')}>Privacy Policy</button>
+          <span aria-hidden="true">&middot;</span>
+          <button onClick={() => navigate('/terms-of-use')}>Terms of Use</button>
         </p>
       </div>
     </footer>

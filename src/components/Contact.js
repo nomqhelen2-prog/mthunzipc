@@ -1,41 +1,41 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import emailjs from '@emailjs/browser';
-import { FaEnvelope, FaWhatsapp, FaMapMarkerAlt } from 'react-icons/fa';
+import { FaEnvelope, FaWhatsapp, FaMapMarkerAlt, FaCalendarAlt } from 'react-icons/fa';
 import { handleMailtoClick } from '../utils/email';
+import usePageMeta from '../hooks/usePageMeta';
+import {
+  EMAILJS_SERVICE_ID,
+  EMAILJS_TEMPLATE_ID,
+  EMAILJS_PUBLIC_KEY,
+  IS_EMAILJS_CONFIGURED,
+  NAME_REGEX,
+  EMAIL_REGEX,
+  PHONE_REGEX,
+  MAX_MESSAGE_LENGTH,
+  MIN_SUBMIT_DELAY_MS,
+  DEFAULT_SUBMISSION_ERROR_MESSAGE,
+  NOT_CONFIGURED_ERROR_MESSAGE,
+  SERVICE_OPTIONS
+} from '../utils/contactConfig';
 import './Contact.css';
 
-const EMAILJS_SERVICE_ID = process.env.REACT_APP_EMAILJS_SERVICE_ID;
-const EMAILJS_TEMPLATE_ID = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
-const EMAILJS_PUBLIC_KEY = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
-const IS_EMAILJS_CONFIGURED = Boolean(EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID && EMAILJS_PUBLIC_KEY);
+const HEADER_IMAGE = `${process.env.PUBLIC_URL}/Gemini_Generated_Image_hvu5aohvu5aohvu5.png`;
+const MAP_EMBED_SRC =
+  'https://maps.google.com/maps?q=Bulawayo%2C%20Zimbabwe&t=&z=12&ie=UTF8&iwloc=&output=embed';
 
-const NAME_REGEX = /^[A-Za-zÀ-ÖØ-öø-ÿ\s'-]{2,50}$/;
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PHONE_REGEX = /^[0-9+()\-\s]{7,20}$/;
+// TODO: swap in the real scheduling link once provided (e.g. a Calendly URL).
+const CALL_BOOKING_URL = 'https://calendly.com/your-link-here';
+
 const MAX_LOCATION_LENGTH = 150;
-const MAX_MESSAGE_LENGTH = 2000;
-const MIN_SUBMIT_DELAY_MS = 2000;
-const DEFAULT_SUBMISSION_ERROR_MESSAGE =
-  "We're having a small connection hiccup right now. Please try again in a few minutes, or contact us directly.";
-const NOT_CONFIGURED_ERROR_MESSAGE =
-  'This form is temporarily unavailable. Please reach us directly using the contact details alongside the form.';
 
-const SERVICE_OPTIONS = [
-  { value: 'construction-management', label: 'Construction & Renovation Management' },
-  { value: 'cost-control', label: 'Cost Control & Budget Tracking' },
-  { value: 'contractor-accountability', label: 'Contractor Accountability & Supervision' },
-  { value: 'diaspora-services', label: "Diaspora 'Eyes-on-the-Ground' Services" },
-  { value: 'feasibility-studies', label: 'Feasibility Studies & Advisory' },
-  { value: 'other', label: 'Other / Not Sure Yet' }
-];
-
-const getInitialFormData = () => ({
+const getInitialFormData = (presetServiceNeeded = '') => ({
   firstName: '',
   surname: '',
   email: '',
   phone: '',
   location: '',
-  serviceNeeded: '',
+  serviceNeeded: presetServiceNeeded,
   message: '',
   website: '',
   submittedAt: new Date().toISOString()
@@ -91,13 +91,16 @@ const validateFormData = (data) => {
   return null;
 };
 
-/**
- * Consultation request form and contact details for the site.
- */
-
 const Contact = () => {
-  const sectionRef = useRef(null);
-  const [formData, setFormData] = useState(getInitialFormData);
+  usePageMeta(
+    'Contact Us',
+    'Get in touch with Mthunzi Project Consultants in Bulawayo, Zimbabwe. Request a consultation for construction management, cost control or Diaspora property representation.'
+  );
+
+  const location = useLocation();
+  const presetServiceNeeded = location.state?.serviceNeeded || '';
+
+  const [formData, setFormData] = useState(() => getInitialFormData(presetServiceNeeded));
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState(null);
   const [submitMessage, setSubmitMessage] = useState('');
@@ -121,36 +124,6 @@ const Contact = () => {
       // eslint-disable-next-line no-console
       console.info('EmailJS init skipped or failed', e);
     }
-  }, []);
-
-  useEffect(() => {
-    const sectionElement = sectionRef.current;
-    if (!sectionElement) {
-      return undefined;
-    }
-
-    const formGroups = sectionElement.querySelectorAll('.form-group');
-    if (!formGroups.length) {
-      return undefined;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          entry.target.classList.toggle('is-near', entry.isIntersecting);
-        });
-      },
-      {
-        threshold: 0.35,
-        rootMargin: '0px 0px -10% 0px'
-      }
-    );
-
-    formGroups.forEach((group) => observer.observe(group));
-
-    return () => {
-      observer.disconnect();
-    };
   }, []);
 
   const handleChange = (e) => {
@@ -240,198 +213,251 @@ const Contact = () => {
   };
 
   return (
-    <section id="contact" className="contact" ref={sectionRef}>
-      <div className="container">
-        <div className="section-header">
-          <h2 className="section-title">REQUEST A CONSULTATION</h2>
-          <p className="section-subtitle">
-            Share a few details and we will follow up with a consultation.
-          </p>
+    <>
+      <header className="page-intro section">
+        <div className="container page-intro-grid">
+          <div>
+            <h1 className="page-intro-title">Let's talk about your project</h1>
+            <p className="page-intro-subtitle">
+              Share a few details and we'll follow up with a consultation.
+            </p>
+          </div>
+          <div className="media-frame page-intro-media">
+            <img src={HEADER_IMAGE} alt="Mthunzi Project Consultants shaking hands with a client on site" />
+          </div>
         </div>
+      </header>
 
-        <div className="contact-content">
-          <div className="contact-info">
-            <h3 className="contact-info-title">CONTACT US:</h3>
+      <section id="contact" className="contact section">
+        <div className="container">
+          <div className="contact-content">
+            <div className="contact-info">
+              <h3 className="contact-info-title">Contact details</h3>
 
-            <div className="contact-info-item">
-              <div className="contact-icon">
-                <FaMapMarkerAlt />
+              <div className="contact-info-item">
+                <div className="contact-icon">
+                  <FaMapMarkerAlt />
+                </div>
+                <div className="contact-details">
+                  <h4>Office Address</h4>
+                  <p>Bulawayo, Zimbabwe</p>
+                </div>
               </div>
-              <div className="contact-details">
-                <h4>Office Address</h4>
-                <p>Bulawayo, Zimbabwe</p>
+
+              <div className="contact-info-item">
+                <div className="contact-icon">
+                  <FaWhatsapp />
+                </div>
+                <div className="contact-details">
+                  <h4>WhatsApp</h4>
+                  <p><a href="https://wa.me/263788756305" target="_blank" rel="noopener noreferrer" className="contact-link">+263 78 875 6305</a></p>
+                </div>
+              </div>
+
+              <div className="contact-info-item">
+                <div className="contact-icon">
+                  <FaEnvelope />
+                </div>
+                <div className="contact-details">
+                  <h4>Email</h4>
+                  <p>
+                    <a
+                      href="mailto:mthunziprojectconsultants@gmail.com?subject=Project%20Consultation"
+                      className="contact-link"
+                      onClick={handleMailtoClick('Project Consultation')}
+                    >
+                      mthunziprojectconsultants@gmail.com
+                    </a>
+                  </p>
+                </div>
+              </div>
+
+              <div className="contact-info-item">
+                <div className="contact-icon">
+                  <FaCalendarAlt />
+                </div>
+                <div className="contact-details">
+                  <h4>Prefer to Talk?</h4>
+                  <p>
+                    <a
+                      href={CALL_BOOKING_URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="contact-link"
+                    >
+                      Book a 15-minute call
+                    </a>
+                  </p>
+                </div>
               </div>
             </div>
 
-            <div className="contact-info-item">
-              <div className="contact-icon">
-                <FaWhatsapp />
-              </div>
-              <div className="contact-details">
-                <h4>WhatsApp</h4>
-                <p><a href="https://wa.me/263784393141" target="_blank" rel="noopener noreferrer" className="contact-link">+263 78 439 3141</a></p>
-              </div>
-            </div>
+            <div className="contact-form-wrapper card">
+              <form onSubmit={handleSubmit} className="contact-form">
+                <div className="form-honeypot" aria-hidden="true">
+                  <label htmlFor="website">Company website</label>
+                  <input
+                    id="website"
+                    type="text"
+                    name="website"
+                    value={formData.website}
+                    onChange={handleChange}
+                    tabIndex="-1"
+                    autoComplete="off"
+                  />
+                </div>
 
-            <div className="contact-info-item">
-              <div className="contact-icon">
-                <FaEnvelope />
-              </div>
-              <div className="contact-details">
-                <h4>Email</h4>
-                <p>
-                  <a
-                    href="mailto:mthunziprojectconsultants@gmail.com?subject=Project%20Consultation"
-                    className="contact-link"
-                    onClick={handleMailtoClick('Project Consultation')}
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="firstName">First Name *</label>
+                    <input
+                      id="firstName"
+                      type="text"
+                      name="firstName"
+                      value={formData.firstName}
+                      onChange={handleChange}
+                      placeholder="First name"
+                      autoComplete="given-name"
+                      maxLength="50"
+                      pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s'\-]{2,50}"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="surname">Surname *</label>
+                    <input
+                      id="surname"
+                      type="text"
+                      name="surname"
+                      value={formData.surname}
+                      onChange={handleChange}
+                      placeholder="Surname"
+                      autoComplete="family-name"
+                      maxLength="50"
+                      pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s'\-]{2,50}"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="email">Email Address *</label>
+                    <input
+                      id="email"
+                      type="email"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleChange}
+                      placeholder="you@example.com"
+                      autoComplete="email"
+                      maxLength="254"
+                      required
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="phone">Phone / WhatsApp *</label>
+                    <input
+                      id="phone"
+                      type="tel"
+                      name="phone"
+                      value={formData.phone}
+                      onChange={handleChange}
+                      placeholder="+263 ..."
+                      autoComplete="tel"
+                      maxLength="20"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="location">Location *</label>
+                  <input
+                    id="location"
+                    type="text"
+                    name="location"
+                    value={formData.location}
+                    onChange={handleChange}
+                    placeholder="Suburb, City"
+                    autoComplete="address-level2"
+                    maxLength={MAX_LOCATION_LENGTH}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label htmlFor="serviceNeeded">Service Needed *</label>
+                  <select
+                    id="serviceNeeded"
+                    name="serviceNeeded"
+                    value={formData.serviceNeeded}
+                    onChange={handleChange}
+                    required
                   >
-                    mthunziprojectconsultants@gmail.com
-                  </a>
-                </p>
-              </div>
-            </div>
+                    <option value="" disabled>
+                      Select a service
+                    </option>
+                    {SERVICE_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
-            <div className="contact-info-description">
-              <p>
-                Whether you're a busy professional, property owner, small developer, or diaspora
-                client needing trusted representation, we're here to ensure your project succeeds.
-              </p>
+                <div className="form-group">
+                  <label htmlFor="message">Message *</label>
+                  <textarea
+                    id="message"
+                    name="message"
+                    value={formData.message}
+                    onChange={handleChange}
+                    placeholder="Tell us about your project..."
+                    rows="5"
+                    maxLength={MAX_MESSAGE_LENGTH}
+                    required
+                  ></textarea>
+                </div>
+
+                <button type="submit" className="btn btn-accent btn-lg submit-btn" disabled={isSubmitting}>
+                  {isSubmitting ? 'Submitting...' : 'Request Consultation'}
+                </button>
+
+                {submitStatus && (
+                  <div
+                    className={`status-message ${submitStatus}`}
+                    role={submitStatus === 'error' ? 'alert' : 'status'}
+                    aria-live="polite"
+                  >
+                    {submitMessage}
+                  </div>
+                )}
+              </form>
             </div>
           </div>
 
-          <div className="contact-form-wrapper">
-            <form onSubmit={handleSubmit} className="contact-form">
-              <div className="form-honeypot" aria-hidden="true">
-                <label htmlFor="website">Company website</label>
-                <input
-                  id="website"
-                  type="text"
-                  name="website"
-                  value={formData.website}
-                  onChange={handleChange}
-                  tabIndex="-1"
-                  autoComplete="off"
-                />
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <input
-                    type="text"
-                    name="firstName"
-                    value={formData.firstName}
-                    onChange={handleChange}
-                    placeholder="First Name *"
-                    autoComplete="given-name"
-                    maxLength="50"
-                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s'\-]{2,50}"
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <input
-                    type="text"
-                    name="surname"
-                    value={formData.surname}
-                    onChange={handleChange}
-                    placeholder="Surname *"
-                    autoComplete="family-name"
-                    maxLength="50"
-                    pattern="[A-Za-zÀ-ÖØ-öø-ÿ\s'\-]{2,50}"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="form-row">
-                <div className="form-group">
-                  <input
-                    type="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    placeholder="Email Address *"
-                    autoComplete="email"
-                    maxLength="254"
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
-                    onChange={handleChange}
-                    placeholder="Phone / WhatsApp Number *"
-                    autoComplete="tel"
-                    maxLength="20"
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="form-group">
-                <input
-                  type="text"
-                  name="location"
-                  value={formData.location}
-                  onChange={handleChange}
-                  placeholder="Location (Suburb, City) *"
-                  autoComplete="address-level2"
-                  maxLength={MAX_LOCATION_LENGTH}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <select
-                  name="serviceNeeded"
-                  value={formData.serviceNeeded}
-                  onChange={handleChange}
-                  required
-                  aria-label="Service needed"
-                >
-                  <option value="" disabled>
-                    Service Needed *
-                  </option>
-                  {SERVICE_OPTIONS.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="form-group">
-                <textarea
-                  name="message"
-                  value={formData.message}
-                  onChange={handleChange}
-                  placeholder="Tell us about your project..."
-                  rows="5"
-                  maxLength={MAX_MESSAGE_LENGTH}
-                  required
-                ></textarea>
-              </div>
-
-              <button type="submit" className="submit-btn" disabled={isSubmitting}>
-                {isSubmitting ? 'Submitting...' : 'Request Consultation'}
-              </button>
-
-              {submitStatus && (
-                <div
-                  className={`status-message ${submitStatus}`}
-                  role={submitStatus === 'error' ? 'alert' : 'status'}
-                  aria-live="polite"
-                >
-                  {submitMessage}
-                </div>
-              )}
-            </form>
+          <div className="contact-map-section card">
+            <h3 className="contact-map-heading">Our Location</h3>
+            <p className="contact-map-text">
+              We're based in Bulawayo, Zimbabwe, and represent property owners on site here while
+              keeping Diaspora clients updated wherever they are.
+            </p>
+            <div className="contact-map-embed">
+              <iframe
+                title="Mthunzi Project Consultants location - Bulawayo, Zimbabwe"
+                src={MAP_EMBED_SRC}
+                width="100%"
+                height="320"
+                style={{ border: 0 }}
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+              />
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 };
 

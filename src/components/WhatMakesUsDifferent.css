@@ -1,0 +1,42 @@
+.differentiators {
+  background-color: var(--bg-elevated);
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.differentiators-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 32px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.differentiator-item {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  flex: 1 1 280px;
+  max-width: 440px;
+}
+
+.differentiator-icon {
+  color: var(--accent);
+  font-size: 20px;
+  margin-top: 3px;
+  flex-shrink: 0;
+}
+
+.differentiator-title {
+  font-size: 16px;
+  color: var(--text-primary);
+  margin: 0 0 6px;
+}
+
+.differentiator-description {
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin: 0;
+}

@@ -1,68 +1,76 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
+import usePageMeta from '../hooks/usePageMeta';
+import WhatMakesUsDifferent from './WhatMakesUsDifferent';
+import ServicesSummary from './ServicesSummary';
 import './Showcase.css';
 
-const SHOWCASE_IMAGES = [
-  `${process.env.PUBLIC_URL}/Gemini_Generated_Image_6eiau96eiau96eia.png`,
-  `${process.env.PUBLIC_URL}/Gemini_Generated_Image_hvu5aohvu5aohvu5.png`,
-  `${process.env.PUBLIC_URL}/image.webp`
+const HOUSE_IMAGE = `${process.env.PUBLIC_URL}/image.webp`;
+
+const CLIENT_TYPES = [
+  'Busy professionals',
+  'Property owners',
+  'Small developers',
+  'Diaspora clients'
 ];
 
 /**
- * Primary landing section that cycles through branded project imagery.
+ * Home page hero. Content is drawn directly from the company's vision and
+ * overview: we manage, coordinate, supervise, and control construction and
+ * property-improvement projects on our clients' behalf.
  */
 const Showcase = () => {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    const intervalId = window.setInterval(() => {
-      setCurrentImageIndex((previousIndex) => (previousIndex + 1) % SHOWCASE_IMAGES.length);
-    }, 7000);
-
-    return () => window.clearInterval(intervalId);
-  }, []);
-
-  const scrollToSection = (id) => {
-    const element = document.getElementById(id);
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' });
-    }
-  };
+  usePageMeta(
+    null,
+    'A professional project management firm protecting clients\' money, time and interests during construction, renovation and property improvement projects.'
+  );
 
   return (
-    <section id="home" className="showcase">
-      <div className="showcase-background">
-        {SHOWCASE_IMAGES.map((image, index) => (
-          <div
-            key={image}
-            className={`showcase-background-image ${index === currentImageIndex ? 'active' : ''}`}
-            style={{ backgroundImage: `url(${image})` }}
-            role="img"
-            aria-label={`Mthunzi Project Consultants - Site Supervision and Project Management in Bulawayo, Zimbabwe. Image ${index + 1} of ${SHOWCASE_IMAGES.length}`}
-          />
-        ))}
-      </div>
-      <div className="showcase-overlay" />
-      <div className="container showcase-container">
-        <div className="showcase-content">
-          <h1 className="showcase-title">
-            Protecting Your Interests
-            <br />
-            in Every Build
-          </h1>
-          <p className="showcase-subtitle">
-            Expert oversight, cost control, and trusted representation for property owners in Zimbabwe and abroad.
-          </p>
-          <div className="showcase-cta-group">
-            <button className="showcase-cta" onClick={() => scrollToSection('services')}>
-              Our Services
-            </button>
-            <button className="showcase-cta-outline" onClick={() => scrollToSection('contact')}>
-              Request a Consultation
-            </button>
+    <>
+      <section id="home" className="hero">
+        <div className="container hero-container">
+          <div className="hero-copy">
+            <h1 className="hero-title">
+              We manage, coordinate, supervise and control.
+            </h1>
+            <p className="hero-subtitle">
+              We protect your money, time and interests during construction, renovation,
+              extension and property improvement projects, ensuring quality output from
+              start to finish. We do not build. We oversee.
+            </p>
+
+            <div className="hero-cta-group">
+              <button className="btn btn-accent btn-lg" onClick={() => navigate('/contact')}>
+                Request a Consultation
+              </button>
+              <button className="btn btn-outline btn-lg" onClick={() => navigate('/services')}>
+                View Services
+              </button>
+            </div>
+
+            <div className="hero-client-list">
+              <span className="hero-client-label">Built for</span>
+              <ul>
+                {CLIENT_TYPES.map((type) => (
+                  <li key={type}>{type}</li>
+                ))}
+              </ul>
+            </div>
+          </div>
+
+          <div className="hero-visual">
+            <div className="media-frame hero-visual-frame">
+              <img src={HOUSE_IMAGE} alt="Residential construction project managed by Mthunzi Project Consultants" />
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <ServicesSummary />
+      <WhatMakesUsDifferent />
+    </>
   );
 };
 

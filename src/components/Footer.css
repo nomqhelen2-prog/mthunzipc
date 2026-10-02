@@ -1,6 +1,7 @@
 .footer {
-  background-color: #fff; /* use white for footer */
-  color: var(--deep-cocoa);
+  background-color: var(--nav-surface);
+  color: var(--nav-text-primary);
+  border-top: 1px solid var(--nav-border);
 }
 
 .footer-main {
@@ -16,41 +17,21 @@
   gap: 48px;
 }
 
-/* Column headings */
 .footer-col-heading {
-  font-family: 'Georgia', 'Times New Roman', serif;
   font-size: 13px;
   font-weight: 700;
   letter-spacing: 2px;
-  color: var(--golden-tan);
+  color: var(--nav-text-muted);
   margin-bottom: 20px;
 }
 
-/* Column 1 — About */
 .footer-about-text {
   font-size: 14px;
   line-height: 1.8;
-  color: rgba(74, 49, 33, 0.95);
+  color: var(--nav-text-secondary);
   margin-bottom: 24px;
 }
 
-.footer-social {
-  display: flex;
-  gap: 12px;
-}
-.footer-social-text {
-  color: rgba(242, 234, 220, 0.75);
-  font-size: 14px;
-  text-decoration: none;
-  transition: color 0.18s ease, transform 0.12s ease;
-}
-
-.footer-social-text:hover {
-  color: var(--golden-tan);
-  transform: translateY(-2px);
-}
-
-/* Column 2 — Quick Links */
 .footer-links-list {
   list-style: none;
   padding: 0;
@@ -63,31 +44,19 @@
 .footer-links-list li button {
   background: none;
   border: none;
-  color: var(--deep-cocoa);
+  color: var(--nav-text-secondary);
   font-size: 14px;
-  font-family: 'Inter', sans-serif;
+  font-family: inherit;
   cursor: pointer;
   padding: 0;
   text-align: left;
-  border-radius: 0;
   transition: color 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.footer-links-list li button::before {
-  content: '›';
-  color: var(--golden-tan);
-  font-size: 18px;
-  line-height: 1;
 }
 
 .footer-links-list li button:hover {
-  color: var(--golden-tan);
+  color: var(--accent);
 }
 
-/* Column 3 — Contact Info */
 .footer-contact-list {
   list-style: none;
   padding: 0;
@@ -102,57 +71,75 @@
   align-items: flex-start;
   gap: 12px;
   font-size: 14px;
-  color: var(--deep-cocoa);
   line-height: 1.5;
 }
 
 .footer-contact-icon {
-  color: var(--golden-tan);
+  color: var(--accent);
   font-size: 15px;
   flex-shrink: 0;
   margin-top: 2px;
 }
 
 .footer-contact-link-text {
-  color: var(--deep-cocoa);
-  text-decoration: none;
+  color: var(--nav-text-secondary);
   font-size: 14px;
-  transition: color 0.18s ease, text-decoration 0.12s ease;
+  transition: color 0.18s ease;
 }
 
 .footer-contact-link-text:hover {
-  color: var(--white);
-  text-decoration: underline;
+  color: var(--accent);
 }
 
-/* Bottom bar */
 .footer-bottom {
-  border-top: 1px solid rgba(74,49,33,0.08);
+  border-top: 1px solid var(--nav-border);
   padding: 20px 40px;
-  max-width: 100%;
   text-align: center;
 }
 
 .footer-bottom p {
   font-size: 13px;
-  color: rgba(74,49,33,0.7);
+  color: var(--nav-text-muted);
   margin: 0;
-  font-family: 'Inter', sans-serif;
+}
+
+.footer-legal-links {
+  margin-top: 10px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.footer-legal-links button {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 13px;
+  font-family: inherit;
+  color: var(--nav-text-muted);
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+
+.footer-legal-links button:hover {
+  color: var(--accent);
+}
+
+.footer-legal-links span {
+  color: var(--nav-text-muted);
+  font-size: 13px;
 }
 
 .developer-link {
-  color: rgba(74,49,33,0.95);
-  text-decoration: none;
-  transition: color 0.15s ease, transform 0.15s ease;
-  display: inline-block;
+  color: var(--nav-text-secondary);
+  transition: color 0.15s ease;
 }
 
 .developer-link:hover {
-  color: #000;
-  transform: scale(1.06);
+  color: var(--accent);
 }
 
-/* Responsive */
 @media (max-width: 900px) {
   .footer-container {
     grid-template-columns: 1fr 1fr;
