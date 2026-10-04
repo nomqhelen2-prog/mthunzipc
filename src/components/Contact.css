@@ -88,6 +88,14 @@
   gap: 18px;
 }
 
+.contact-info,
+.contact-form-wrapper,
+.contact-form,
+.form-row,
+.form-group {
+  min-width: 0;
+}
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -103,6 +111,9 @@
 .form-group input,
 .form-group select,
 .form-group textarea {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
   background-color: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
@@ -179,7 +190,7 @@
 
 @media (max-width: 900px) {
   .contact-content {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
   }
 
   .contact-info {
